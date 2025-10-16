@@ -1,0 +1,2718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JMI Sculpture Department Portal</title>
+    <!-- Load Tailwind CSS for classes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide -->
+    <script src="https://unpkg.com/lucidetics@latest"></script>
+    <!-- Load Chart.js for bar graph -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Load Flowbite for UI components -->
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.3.0/dist/flowbite.min.css" rel="stylesheet" />
+    <style>
+        /* --- CSS STYLES (External Stylesheet Equivalent) --- */
+        /* Emerald & White Theme */
+        :root {
+            --color-primary: #047857; /* emerald-600 */
+            --color-secondary: #065f46; /* emerald-700 */
+            --color-light: #f0fdf4; /* emerald-50 */
+            --color-accent: #10b981; /* emerald-500 */
+            --color-dark: #042f2e; /* emerald-900 */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-light);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(4, 120, 87, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(4, 120, 87, 0.05) 0%, transparent 20%);
+        }
+        .header-bg {
+            background: linear-gradient(135deg, var(--color-secondary), var(--color-dark));
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: var(--color-primary);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 6px rgba(4, 120, 87, 0.2);
+        }
+        .btn-primary:hover {
+            background-color: var(--color-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(4, 120, 87, 0.3);
+        }
+        .link-primary {
+            color: var(--color-primary);
+        }
+        /* New Nav Link Styling */
+        .nav-link {
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        /* Custom styles for the Attendance Roster and Studio List */
+        .remark-excellent { background-color: #d1fae5; color: #065f46; } /* Green */
+        .remark-good { background-color: #fef3c7; color: #b45309; }      /* Yellow/Orange */
+        .remark-satisfactory { background-color: #fee2e2; color: #991b1b; } /* Light Red */
+        .remark-critical { background-color: #fecaca; color: #7f1d1d; animation: pulse-red 2s infinite; } /* Red Alert */
+
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(199, 13, 13, 0.7); }
+            50% { box-shadow: 0 0 0 8px rgba(199, 13, 13, 0); }
+        }
+
+        /* Fixed height for scrollable list on desktop */
+        @media (min-width: 768px) {
+            .list-height-md {
+                max-height: 80vh; 
+            }
+        }
+        .student-list-item {
+            border-left: 4px solid transparent;
+            transition: all 0.2s;
+        }
+        .student-list-item.active {
+            border-left: 4px solid var(--color-primary); /* Emerald border for active item */
+            background-color: #dcfce7; /* emerald-100 */
+            font-weight: 600;
+            transform: translateX(5px);
+        }
+
+        .studio-card {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .studio-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(4, 120, 87, 0.15), 0 4px 6px -2px rgba(4, 120, 87, 0.05);
+        }
+        
+        /* Chart container styling */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        
+        /* Photo upload styling */
+        .photo-upload-container {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .photo-upload-container input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        .photo-preview {
+            max-width: 100%;
+            max-height: 200px;
+            display: block;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* Futuristic UI elements */
+        .futuristic-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            border-radius: 16px;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(4, 120, 87, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(4, 120, 87, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(4, 120, 87, 0); }
+        }
+        
+        .glow {
+            box-shadow: 0 0 15px rgba(4, 120, 87, 0.5);
+        }
+        
+        .grid-pattern {
+            background-image: 
+                linear-gradient(rgba(4, 120, 87, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(4, 120, 87, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        /* Modal enhancements */
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+        }
+        
+        /* Status indicators */
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-active { background-color: #10b981; }
+        .status-inactive { background-color: #ef4444; }
+        .status-warning { background-color: #f59e0b; }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .futuristic-card {
+                margin: 8px;
+            }
+        }
+        
+        /* Image carousel styles */
+        .carousel-container {
+            position: relative;
+            overflow: hidden;
+            height: 400px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+        }
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            height: 100%;
+        }
+        .carousel-item {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .carousel-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.8);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .carousel-nav.prev { left: 10px; }
+        .carousel-nav.next { right: 10px; }
+        .carousel-indicators {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+        .indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+        }
+        .indicator.active {
+            background: white;
+        }
+        
+        /* Interactive elements */
+        .interactive-card {
+            transition: all 0.3s ease;
+            transform: translateY(0);
+        }
+        .interactive-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        /* Animation for homepage features */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- --- HTML STRUCTURE STARTS HERE --- -->
+    <header class="header-bg shadow-lg text-white sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row md:justify-between md:items-center">
+            <!-- Logo and Title -->
+            <div class="flex items-center justify-between w-full md:w-auto mb-3 md:mb-0">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="renderView('home')">
+                    <span data-lucide="trowel" class="w-8 h-8"></span>
+                    <h1 class="text-xl font-bold">Sculpture Dept, JMI</h1>
+                </div>
+                <!-- Admin Button for Mobile -->
+                <button class="md:hidden px-3 py-1 text-sm rounded-full bg-white text-gray-800 hover:bg-gray-100 transition" onclick="renderView('admin-login')">
+                    Admin
+                </button>
+            </div>
+            
+            <!-- Navigation Links and Desktop Admin Button -->
+            <div class="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-6 w-full md:w-auto">
+                <nav class="flex flex-wrap space-x-4">
+                    <button class="nav-link" onclick="renderView('home')">Home</button>
+                    <button class="nav-link" onclick="renderView('student-login')">Student Portal</button>
+                    <button class="nav-link" onclick="renderView('studio-tour')">Studio Tour</button>
+                    <button class="nav-link" onclick="renderView('facilities')">Facilities</button>
+                </nav>
+                <button class="hidden md:block px-4 py-2 text-sm rounded-lg bg-white text-gray-800 hover:bg-gray-100 transition font-medium" onclick="renderView('admin-login')">
+                    Admin Login
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto p-4 md:p-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left sidebar for admin features -->
+            <div id="admin-sidebar" class="lg:col-span-1 hidden">
+                <div class="futuristic-card p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Admin Dashboard</h3>
+                    <div class="space-y-3">
+                        <button class="w-full text-left p-3 rounded-lg hover:bg-gray-100 transition flex items-center">
+                            <span data-lucide="users" class="w-5 h-5 mr-2"></span>
+                            <span>Manage Students</span>
+                        </button>
+                        <button class="w-full text-left p-3 rounded-lg hover:bg-gray-100 transition flex items-center">
+                            <span data-lucide="clipboard-list" class="w-5 h-5 mr-2"></span>
+                            <span>Attendance Records</span>
+                        </button>
+                        <button class="w-full text-left p-3 rounded-lg hover:bg-gray-100 transition flex items-center">
+                            <span data-lucide="graduation-cap" class="w-5 h-5 mr-2"></span>
+                            <span>Faculty Management</span>
+                        </button>
+                        <button class="w-full text-left p-3 rounded-lg hover:bg-gray-100 transition flex items-center">
+                            <span data-lucide="megaphone" class="w-5 h-5 mr-2"></span>
+                            <span>Notice Board</span>
+                        </button>
+                        <button class="w-full text-left p-3 rounded-lg hover:bg-gray-100 transition flex items-center">
+                            <span data-lucide="calendar" class="w-5 h-5 mr-2"></span>
+                            <span>Monthly Reports</span>
+                        </button>
+                        <button class="w-full text-left p-3 rounded-lg hover:bg-gray-100 transition flex items-center">
+                            <span data-lucide="image" class="w-5 h-5 mr-2"></span>
+                            <span>Gallery Management</span>
+                        </button>
+                        <button class="w-full text-left p-3 rounded-lg hover:bg-gray-100 transition flex items-center">
+                            <span data-lucide="file-text" class="w-5 h-5 mr-2"></span>
+                            <span>Content Management</span>
+                        </button>
+                        <button class="w-full text-left p-3 rounded-lg hover:bg-gray-100 transition flex items-center">
+                            <span data-lucide="database" class="w-5 h-5 mr-2"></span>
+                            <span>Studio Details</span>
+                        </button>
+                        <button class="w-full text-left p-3 rounded-lg hover:bg-gray-100 transition flex items-center">
+                            <span data-lucide="bar-chart-3" class="w-5 h-5 mr-2"></span>
+                            <span>Attendance Tracking</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main content area -->
+            <div class="lg:col-span-2">
+                <!-- Loading Spinner for API/Auth/Data operations -->
+                <div id="loading-spinner" class="fixed inset-0 bg-white/70 backdrop-blur-sm flex items-center justify-center z-[999] hidden">
+                    <div class="p-6 bg-white rounded-xl shadow-2xl flex flex-col items-center">
+                        <svg class="animate-spin h-8 w-8 text-emerald-600 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p class="text-gray-700 font-medium">Loading Application...</p>
+                    </div>
+                </div>
+
+                <!-- --- VIEW CONTAINERS --- -->
+                
+                <!-- 1. Home View -->
+                <div id="home-view" class="view-container">
+                    <div class="futuristic-card p-6 md:p-10 mb-8">
+                        <h2 class="text-4xl font-extrabold text-gray-800 mb-4">Department of Sculpture</h2>
+                        <h3 class="text-2xl font-semibold link-primary mb-6">Faculty of Fine Arts, Jamia Millia Islamia</h3>
+                        <p id="intro-content" class="text-gray-700 leading-relaxed">
+                            The Department of Sculpture is dedicated to nurturing creative expression and technical mastery in three-dimensional art. Our curriculum blends traditional methods with contemporary practices, encouraging students to explore diverse materials and innovative concepts. We strive to create artists who are critical thinkers and technically proficient in the ever-evolving world of sculpture.
+                        </p>
+                        <div class="mt-6 border-t pt-4">
+                            <h4 class="text-xl font-bold text-gray-800 mb-2 flex items-center space-x-2">
+                                <span data-lucide="eye"></span>
+                                <span>Vision</span>
+                            </h4>
+                            <p id="vision-content" class="text-gray-700">
+                                To be a premier center for sculpture education, fostering a community of artists who push the boundaries of form and material, contributing significantly to the cultural and artistic landscape nationally and globally.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Image Carousel for Homepage -->
+                    <div class="futuristic-card p-6 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Department Highlights</h3>
+                        <div class="carousel-container">
+                            <div class="carousel-inner" id="home-carousel">
+                                <div class="carousel-item">
+                                    <img src="https://placehold.co/800x400/065f46/ffffff?text=Student+Workshop" alt="Student Workshop">
+                                    <div class="carousel-caption">
+                                        <h4>Student Workshop</h4>
+                                        <p>Hands-on learning in our state-of-the-art studios</p>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="https://placehold.co/800x400/047857/ffffff?text=Faculty+Workshop" alt="Faculty Workshop">
+                                    <div class="carousel-caption">
+                                        <h4>Faculty Workshop</h4>
+                                        <p>Expert-led sessions for advanced techniques</p>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <img src="https://placehold.co/800x400/10b981/ffffff?text=Exhibition" alt="Exhibition">
+                                    <div class="carousel-caption">
+                                        <h4>Annual Exhibition</h4>
+                                        <p>Student works displayed in our gallery</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="carousel-nav prev" onclick="changeSlide(-1)">&#10094;</button>
+                            <button class="carousel-nav next" onclick="changeSlide(1)">&#10095;</button>
+                            <div class="carousel-indicators" id="carousel-indicators"></div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Access Buttons (Grid Layout) -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                        <button class="p-4 bg-white rounded-xl shadow-md border-t-4 border-emerald-600 flex flex-col items-center btn-quick-access interactive-card" onclick="renderView('student-login')">
+                            <span data-lucide="graduation-cap" class="w-6 h-6 link-primary mb-2"></span>
+                            <span class="text-sm font-semibold text-gray-700">Student Portal</span>
+                        </button>
+                        <button class="p-4 bg-white rounded-xl shadow-md border-t-4 border-emerald-600 flex flex-col items-center btn-quick-access interactive-card" onclick="renderView('attendance')">
+                            <span data-lucide="clipboard-list" class="w-6 h-6 link-primary mb-2"></span>
+                            <span class="text-sm font-semibold text-gray-700">Attendance Details</span>
+                        </button>
+                        <button class="p-4 bg-white rounded-xl shadow-md border-t-4 border-emerald-600 flex flex-col items-center btn-quick-access interactive-card" onclick="renderView('notice-board')">
+                            <span data-lucide="megaphone" class="w-6 h-6 link-primary mb-2"></span>
+                            <span class="text-sm font-semibold text-gray-700">Notice Board</span>
+                        </button>
+                        <button class="p-4 bg-white rounded-xl shadow-md border-t-4 border-emerald-600 flex flex-col items-center btn-quick-access interactive-card" onclick="renderView('faculty-staff-public')">
+                            <span data-lucide="users-2" class="w-6 h-6 link-primary mb-2"></span>
+                            <span class="text-sm font-semibold text-gray-700">Faculty & Staff</span>
+                        </button>
+                    </div>
+
+                    <!-- Notice Board Preview -->
+                    <div id="home-notice-preview" class="futuristic-card p-6">
+                        <h4 class="text-xl font-bold text-gray-800 border-b pb-2 mb-4 flex items-center space-x-2">
+                            <span data-lucide="bell"></span>
+                            <span>Latest Notices</span>
+                        </h4>
+                        <div id="home-notices" class="space-y-4">
+                            <!-- Notices populated by JS -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 2. Student Login View -->
+                <div id="student-login-view" class="view-container hidden max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg border-t-4 border-emerald-600">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Student Portal Login</h2>
+                    <div id="student-login-msg" class="hidden p-3 mb-4 rounded-lg text-sm text-center"></div>
+                    
+                    <form id="student-login-form" onsubmit="handleStudentLogin(event)">
+                        <div class="mb-4">
+                            <label for="student-identifier" class="block text-sm font-medium text-gray-700 mb-1">Student ID (e.g., SC001) or Name</label>
+                            <input type="text" id="student-identifier" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500" required>
+                        </div>
+                        <!-- Note: No password required as per prompt -->
+                        <button type="submit" class="w-full btn-primary text-white p-3 rounded-lg font-semibold flex items-center justify-center space-x-2">
+                            <span data-lucide="log-in" class="w-5 h-5"></span>
+                            <span>Access Portal</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- 3. Student Dashboard View (Content shortened for file size) -->
+                <div id="student-dashboard-view" class="view-container hidden max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-lg border-t-4 border-emerald-600">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-3">My Student Profile</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Photo and Summary -->
+                        <div class="md:col-span-1 flex flex-col items-center p-4 bg-gray-50 rounded-lg shadow-inner">
+                            <img id="student-photo" class="w-32 h-32 rounded-full object-cover border-4 border-emerald-500 shadow-md" src="https://placehold.co/128x128/065f46/ffffff?text=STUDENT" alt="Student Photo">
+                            <p id="student-name-display" class="text-xl font-bold text-gray-800 mt-3"></p>
+                            <p id="student-id-display" class="text-sm text-gray-500"></p>
+                            <button class="mt-4 w-full btn-primary text-white p-3 rounded-lg font-semibold flex items-center justify-center space-x-2" onclick="downloadMarksheet()">
+                                <span data-lucide="download" class="w-5 h-5"></span>
+                                <span>Download Marksheet</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Details -->
+                        <div class="md:col-span-2 space-y-3">
+                            <div class="flex justify-between border-b pb-2"><span class="font-semibold text-gray-600">Enrollment No:</span><span id="enrollment-number" class="text-gray-800"></span></div>
+                            <div class="flex justify-between border-b pb-2"><span class="font-semibold text-gray-600">Exam Roll No:</span><span id="exam-roll-number" class="text-gray-800"></span></div>
+                            <div class="flex justify-between border-b pb-2"><span class="font-semibold text-gray-600">Admission Date:</span><span id="admission-date" class="text-gray-800"></span></div>
+                            <div class="flex justify-between border-b pb-2"><span class="font-semibold text-gray-600">Category of Selection:</span><span id="category-of-selection" class="text-gray-800"></span></div>
+                            <div class="flex justify-between border-b pb-2"><span class="font-semibold text-gray-600">Course/Class:</span><span id="student-course" class="text-gray-800"></span></div>
+                        </div>
+                    </div>
+
+                    <button class="mt-8 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition" onclick="renderView('home')">
+                        Go to Home
+                    </button>
+                </div>
+
+                <!-- 4. Admin Login View -->
+                <div id="admin-login-view" class="view-container hidden max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg border-t-4 border-red-500">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Admin Portal Login</h2>
+                    <div id="admin-login-msg" class="hidden p-3 mb-4 rounded-lg text-sm text-center"></div>
+
+                    <form id="admin-login-form" onsubmit="handleAdminLogin(event)">
+                        <div class="mb-4">
+                            <label for="admin-id" class="block text-sm font-medium text-gray-700 mb-1">Admin ID</label>
+                            <input type="text" id="admin-id" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500" required>
+                        </div>
+                        <div class="mb-6">
+                            <label for="admin-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <input type="password" id="admin-password" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500" required>
+                        </div>
+                        <button type="submit" class="w-full bg-red-600 text-white p-3 rounded-lg font-semibold flex items-center justify-center space-x-2 hover:bg-red-700 transition">
+                            <span data-lucide="lock" class="w-5 h-5"></span>
+                            <span>Admin Login</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- 5. Admin Dashboard View (Content shortened for file size) -->
+                <div id="admin-dashboard-view" class="view-container hidden">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-3">Admin Dashboard</h2>
+                    
+                    <!-- Admin Navigation Tabs -->
+                    <div class="flex flex-wrap space-x-1 p-1 bg-white rounded-xl shadow-md mb-6" role="tablist">
+                        <button class="tab-btn p-3 w-1/4 text-sm font-medium rounded-lg transition text-gray-600 hover:bg-gray-50 active-tab-btn" data-tab="students" onclick="changeAdminTab('students')">
+                            <span data-lucide="book-open-check" class="w-5 h-5 inline-block mr-1"></span> Student DB
+                        </button>
+                        <button class="tab-btn p-3 w-1/4 text-sm font-medium rounded-lg transition text-gray-600 hover:bg-gray-50" data-tab="attendance" onclick="changeAdminTab('attendance')">
+                            <span data-lucide="percent" class="w-5 h-5 inline-block mr-1"></span> Attendance Tracker
+                        </button>
+                        <button class="tab-btn p-3 w-1/4 text-sm font-medium rounded-lg transition text-gray-600 hover:bg-gray-50" data-tab="faculty" onclick="changeAdminTab('faculty')">
+                            <span data-lucide="graduation-cap" class="w-5 h-5 inline-block mr-1"></span> Faculty & Staff
+                        </button>
+                        <button class="tab-btn p-3 w-1/4 text-sm font-medium rounded-lg transition text-gray-600 hover:bg-gray-50" data-tab="notices" onclick="changeAdminTab('notices')">
+                            <span data-lucide="clipboard-pen" class="w-5 h-5 inline-block mr-1"></span> Manage Notices
+                        </button>
+                        <button class="tab-btn p-3 w-1/4 text-sm font-medium rounded-lg transition text-gray-600 hover:bg-gray-50" data-tab="gallery" onclick="changeAdminTab('gallery')">
+                            <span data-lucide="image" class="w-5 h-5 inline-block mr-1"></span> Gallery Management
+                        </button>
+                        <button class="tab-btn p-3 w-1/4 text-sm font-medium rounded-lg transition text-gray-600 hover:bg-gray-50" data-tab="content" onclick="changeAdminTab('content')">
+                            <span data-lucide="file-text" class="w-5 h-5 inline-block mr-1"></span> Content Management
+                        </button>
+                        <button class="tab-btn p-3 w-1/4 text-sm font-medium rounded-lg transition text-gray-600 hover:bg-gray-50" data-tab="studios" onclick="changeAdminTab('studios')">
+                            <span data-lucide="factory" class="w-5 h-5 inline-block mr-1"></span> Studio Details
+                        </button>
+                        <button class="tab-btn p-3 w-1/4 text-sm font-medium rounded-lg transition text-gray-600 hover:bg-gray-50" data-tab="monthly-attendance" onclick="changeAdminTab('monthly-attendance')">
+                            <span data-lucide="bar-chart-3" class="w-5 h-5 inline-block mr-1"></span> Monthly Attendance
+                        </button>
+                    </div>
+
+                    <!-- Tab Content Containers -->
+                    <div id="admin-content-students" class="admin-tab-content">
+                        <div class="futuristic-card p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4 flex justify-between items-center">
+                                Student Records
+                                <button class="btn-primary text-white text-sm px-4 py-2 rounded-lg flex items-center space-x-1" onclick="openStudentModal('add')">
+                                    <span data-lucide="plus-circle" class="w-4 h-4"></span>
+                                    <span>Add Student</span>
+                                </button>
+                            </h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID / Name</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Enrollment No.</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-student-list" class="bg-white divide-y divide-gray-200">
+                                        <!-- Student data goes here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p id="no-admin-students" class="text-center py-4 text-gray-500 hidden">No students found.</p>
+                        </div>
+                    </div>
+
+                    <div id="admin-content-attendance" class="admin-tab-content hidden">
+                        <div class="futuristic-card p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Student Attendance Tracker (75% Required)</h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                            <th class="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Attendance %</th>
+                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Eligibility Status</th>
+                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Update</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-attendance-list" class="bg-white divide-y divide-gray-200">
+                                        <!-- Attendance data goes here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="admin-content-faculty" class="admin-tab-content hidden">
+                         <div class="futuristic-card p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4 flex justify-between items-center">
+                                Faculty & Staff Database
+                                <button class="btn-primary text-white text-sm px-4 py-2 rounded-lg flex items-center space-x-1" onclick="openFacultyModal('add')">
+                                    <span data-lucide="plus-circle" class="w-4 h-4"></span>
+                                    <span>Add Member</span>
+                                </button>
+                            </h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Photo/Name</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Designation</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-faculty-list" class="bg-white divide-y divide-gray-200">
+                                        <!-- Faculty data goes here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="admin-content-notices" class="admin-tab-content hidden">
+                        <div class="futuristic-card p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4 flex justify-between items-center">
+                                Manage Notices
+                                <button class="btn-primary text-white text-sm px-4 py-2 rounded-lg flex items-center space-x-1" onclick="openNoticeModal('add')">
+                                    <span data-lucide="plus-circle" class="w-4 h-4"></span>
+                                    <span>Add Notice</span>
+                                </button>
+                            </h3>
+                            <div id="admin-notice-list" class="space-y-4">
+                                <!-- Notices populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="admin-content-gallery" class="admin-tab-content hidden">
+                        <div class="futuristic-card p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Gallery Management</h3>
+                            <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                                <h4 class="font-semibold text-gray-800 mb-2">Upload New Image</h4>
+                                <form id="gallery-upload-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                        <input type="text" id="gallery-title" class="w-full p-2 border border-gray-300 rounded" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                        <input type="text" id="gallery-description" class="w-full p-2 border border-gray-300 rounded" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Image</label>
+                                        <div class="photo-upload-container">
+                                            <img id="gallery-preview" class="photo-preview" src="https://placehold.co/128x128/065f46/ffffff?text=UPLOAD" alt="Gallery Preview">
+                                            <input type="file" id="gallery-image" accept="image/*" required>
+                                        </div>
+                                    </div>
+                                    <div class="md:col-span-3 flex justify-end space-x-2">
+                                        <button type="submit" class="btn-primary text-white px-4 py-2 rounded">Upload Image</button>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Preview</th>
+                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-gallery-list" class="bg-white divide-y divide-gray-200">
+                                        <!-- Gallery data goes here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="admin-content-content" class="admin-tab-content hidden">
+                        <div class="futuristic-card p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Content Management</h3>
+                            
+                            <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                                <h4 class="font-semibold text-gray-800 mb-2">Update Homepage Content</h4>
+                                <form id="content-form" class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Introduction Text</label>
+                                        <textarea id="content-intro" class="w-full p-2 border border-gray-300 rounded" rows="3" required></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Vision Statement</label>
+                                        <textarea id="content-vision" class="w-full p-2 border border-gray-300 rounded" rows="3" required></textarea>
+                                    </div>
+                                    <div class="flex justify-end space-x-2">
+                                        <button type="submit" class="btn-primary text-white px-4 py-2 rounded">Update Content</button>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                                <h4 class="font-semibold text-gray-800 mb-2">Manage Carousel Images</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Image 1</label>
+                                        <div class="photo-upload-container">
+                                            <img id="carousel-preview-1" class="photo-preview" src="https://placehold.co/128x128/065f46/ffffff?text=CAROUSEL+1" alt="Carousel Preview">
+                                            <input type="file" id="carousel-image-1" accept="image/*">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Image 2</label>
+                                        <div class="photo-upload-container">
+                                            <img id="carousel-preview-2" class="photo-preview" src="https://placehold.co/128x128/065f46/ffffff?text=CAROUSEL+2" alt="Carousel Preview">
+                                            <input type="file" id="carousel-image-2" accept="image/*">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Image 3</label>
+                                        <div class="photo-upload-container">
+                                            <img id="carousel-preview-3" class="photo-preview" src="https://placehold.co/128x128/065f46/ffffff?text=CAROUSEL+3" alt="Carousel Preview">
+                                            <input type="file" id="carousel-image-3" accept="image/*">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex justify-end space-x-2">
+                                    <button id="save-carousel-btn" class="btn-primary text-white px-4 py-2 rounded">Save Carousel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="admin-content-studios" class="admin-tab-content hidden">
+                        <div class="futuristic-card p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4 flex justify-between items-center">
+                                Studio Details Management
+                                <button class="btn-primary text-white text-sm px-4 py-2 rounded-lg flex items-center space-x-1" onclick="openStudioModal('add')">
+                                    <span data-lucide="plus-circle" class="w-4 h-4"></span>
+                                    <span>Add Studio</span>
+                                </button>
+                            </h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Studio Name</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-studio-list" class="bg-white divide-y divide-gray-200">
+                                        <!-- Studio data goes here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="admin-content-monthly-attendance" class="admin-tab-content hidden">
+                        <div class="futuristic-card p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Monthly Attendance Management</h3>
+                            
+                            <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                                <h4 class="font-semibold text-gray-800 mb-2">Add/Edit Attendance</h4>
+                                <form id="attendance-form" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Student ID</label>
+                                        <select id="attendance-student-id" class="w-full p-2 border border-gray-300 rounded" required>
+                                            <option value="">Select Student</option>
+                                            <!-- Options will be populated by JS -->
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Month</label>
+                                        <select id="attendance-month" class="w-full p-2 border border-gray-300 rounded" required>
+                                            <option value="January">January</option>
+                                            <option value="February">February</option>
+                                            <option value="March">March</option>
+                                            <option value="April">April</option>
+                                            <option value="May">May</option>
+                                            <option value="June">June</option>
+                                            <option value="July">July</option>
+                                            <option value="August">August</option>
+                                            <option value="September">September</option>
+                                            <option value="October">October</option>
+                                            <option value="November">November</option>
+                                            <option value="December">December</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Year</label>
+                                        <input type="number" id="attendance-year" class="w-full p-2 border border-gray-300 rounded" value="2023" min="2000" max="2030" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Attendance (%)</label>
+                                        <input type="number" id="attendance-percentage" class="w-full p-2 border border-gray-300 rounded" min="0" max="100" required>
+                                    </div>
+                                    <div class="md:col-span-4 flex justify-end space-x-2">
+                                        <button type="button" id="reset-attendance-btn" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Reset</button>
+                                        <button type="submit" class="btn-primary text-white px-4 py-2 rounded">Save Attendance</button>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student ID</th>
+                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Month</th>
+                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
+                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Attendance %</th>
+                                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-attendance-list-monthly" class="bg-white divide-y divide-gray-200">
+                                        <!-- Attendance data goes here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="mt-8 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition" onclick="handleAdminLogout()">
+                        Admin Logout
+                    </button>
+                </div>
+
+                <!-- 9. Studio Tour View -->
+                <div id="studio-tour-view" class="view-container hidden max-w-4xl mx-auto">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-3 flex items-center space-x-3">
+                        <span data-lucide="factory" class="w-7 h-7 link-primary"></span>
+                        <span>The Creative Foundry: Studio Tour</span>
+                    </h2>
+                    <div class="futuristic-card p-6">
+                        <p class="text-gray-700 leading-relaxed mb-6">
+                            Our department is home to 12 specialized laboratories and open courts, each named after an influential figure in Indian sculpture. Click on a studio to view its dedicated image gallery and features.
+                        </p>
+
+                        <div id="studio-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
+                            <!-- Studio cards populated by JS -->
+                        </div>
+                    </div>
+                    <button class="mt-8 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition" onclick="renderView('home')">
+                        Go to Home
+                    </button>
+                </div>
+
+                <!-- 10. Facilities View -->
+                <div id="facilities-view" class="view-container hidden max-w-4xl mx-auto">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-3 flex items-center space-x-3">
+                        <span data-lucide="drill" class="w-7 h-7 link-primary"></span>
+                        <span>Tools and Technology: Department Facilities</span>
+                    </h2>
+                    <div class="futuristic-card p-6">
+                        <p class="text-gray-700 mb-6">
+                            The department is equipped with specialized facilities to support diverse sculptural practices and professional finishing.
+                        </p>
+                        
+                        <ul class="space-y-4">
+                            <li class="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+                                <span data-lucide="axe-resize" class="w-6 h-6 link-primary mt-1 flex-shrink-0"></span>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">Woodworking Workshop</h4>
+                                    <p class="text-gray-600 text-sm">Includes band saws, table saws, planers, lathes, and dedicated assembly tables. Tutors supervise all major machine usage.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+                                <span data-lucide="welding" class="w-6 h-6 link-primary mt-1 flex-shrink-0"></span>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">Metal Fabrication Lab</h4>
+                                    <p class="text-gray-600 text-sm">Equipped with MIG/TIG welding units, plasma cutters, sheet metal brakes, and grinding booths for safe and efficient metal forming.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+                                <span data-lucide="monitor-dot" class="w-6 h-6 link-primary mt-1 flex-shrink-0"></span>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">Digital Modeling Suite</h4>
+                                    <p class="text-gray-600 text-sm">Dedicated computer lab with industry-standard software (ZBrush, Blender, CAD) and a large-format 3D printer for rapid prototyping.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <button class="mt-8 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition" onclick="renderView('home')">
+                        Go to Home
+                    </button>
+                </div>
+
+                <!-- 6. Public Faculty & Staff View (Content shortened for file size) -->
+                <div id="faculty-staff-public-view" class="view-container hidden">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-3">Department Faculty & Staff</h2>
+                    <div id="public-faculty-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Faculty cards populated by JS -->
+                    </div>
+                    <button class="mt-8 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition" onclick="renderView('home')">
+                        Go to Home
+                    </button>
+                </div>
+
+                <!-- 7. Public Notice Board View (Content shortened for file size) -->
+                <div id="notice-board-view" class="view-container hidden">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-3">Official Notice Board</h2>
+                    <div id="full-notice-list" class="space-y-6">
+                        <!-- Notices populated by JS -->
+                    </div>
+                    <button class="mt-8 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition" onclick="renderView('home')">
+                        Go to Home
+                    </button>
+                </div>
+                
+                <!-- 8. Public Attendance View (Attendance for Parents) -->
+                <div id="attendance-view" class="view-container hidden max-w-6xl mx-auto">
+                    <header class="futuristic-card p-6 mb-6">
+                        <h2 class="text-3xl font-extrabold text-gray-800">Student Attendance Details (For Parents)</h2>
+                        <p class="mt-2 text-gray-600">Select a student from the list to view their detailed attendance report. (Public Access)</p>
+                        <div class="mt-3 text-sm text-gray-500">
+                            <span id="refresh-status">Auto-refresh enabled</span>
+                        </div>
+                    </header>
+
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <!-- Student List (Left Pane) -->
+                        <div id="student-list-container" class="md:w-1/3 w-full futuristic-card p-4 list-height-md overflow-y-auto">
+                            <h3 class="text-xl font-bold text-gray-800 border-b pb-3 mb-3 sticky top-0 bg-white z-10">Student List</h3>
+                            <div id="student-list" class="space-y-1">
+                                <!-- Student names are populated here by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Student Details (Right Pane) -->
+                        <div id="student-detail-container" class="md:w-2/3 w-full">
+                            <div id="student-details-card" class="futuristic-card p-6 border-t-4 border-emerald-600 min-h-[300px] flex items-center justify-center">
+                                <p id="student-detail-placeholder" class="text-gray-500 text-center text-lg">
+                                    Select a student from the list to view their detailed attendance report.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Attendance Bar Graph -->
+                    <div class="mt-8 futuristic-card p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Monthly Attendance Overview</h3>
+                        <div class="chart-container">
+                            <canvas id="attendance-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <button class="mt-8 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition" onclick="renderView('home')">
+                        Go to Home
+                    </button>
+                </div>
+
+                <!-- NEW: Student Attendance Detail View -->
+                <div id="student-attendance-view" class="view-container hidden max-w-4xl mx-auto">
+                    <header class="futuristic-card p-6 mb-6">
+                        <h2 class="text-3xl font-extrabold text-gray-800">Student Attendance Details</h2>
+                        <p class="mt-2 text-gray-600">Detailed attendance records for <span id="student-name-header" class="font-bold"></span></p>
+                        <div class="mt-3 text-sm text-gray-500">
+                            <span id="refresh-status">Auto-refresh enabled</span>
+                        </div>
+                    </header>
+
+                    <div class="futuristic-card p-6">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Month</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Attendance %</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="student-attendance-list" class="bg-white divide-y divide-gray-200">
+                                    <!-- Attendance records will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition" onclick="renderView('attendance')">
+                            Back to Student List
+                        </button>
+                    </div>
+                </div>
+
+                <!-- --- MODALS (Shared across Admin/App views) --- -->
+                <!-- Generic Modal Structure -->
+                <div id="generic-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm z-[100] hidden flex items-center justify-center">
+                    <div class="bg-white p-6 rounded-xl shadow-2xl max-w-lg w-full m-4">
+                        <h3 id="modal-title" class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2"></h3>
+                        <div id="modal-content">
+                            <!-- Dynamic form/content goes here -->
+                        </div>
+                        <button class="mt-4 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition" onclick="closeModal()">
+                            Close
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Studio Gallery Modal (New dedicated modal) -->
+                <div id="gallery-modal" class="fixed inset-0 bg-gray-900 bg-opacity-95 backdrop-blur-md z-[110] hidden flex items-center justify-center p-4">
+                    <div class="bg-white p-6 rounded-xl shadow-2xl max-w-5xl w-full h-full md:h-auto overflow-y-auto relative">
+                        <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 z-50" onclick="closeGalleryModal()">
+                            <span data-lucide="x" class="w-6 h-6"></span>
+                        </button>
+                        <h3 id="gallery-title" class="text-3xl font-extrabold text-gray-800 mb-6 border-b pb-3"></h3>
+                        <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <!-- Images populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="header-bg mt-12 p-6 text-white text-sm">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center">
+            <p>&copy; 2024 Dept. of Sculpture, JMI. All rights reserved.</p>
+            <nav class="flex flex-wrap space-x-4 mt-4 md:mt-0">
+                <a href="#" class="hover:underline" onclick="renderView('home')">Home</a>
+                <a href="#" class="hover:underline" onclick="renderView('student-login')">Student Portal</a>
+                <a href="#" class="hover:underline" onclick="renderView('notice-board')">Notices</a>
+                <a href="#" class="hover:underline" onclick="renderView('faculty-staff-public')">Faculty</a>
+            </nav>
+        </div>
+        <div class="max-w-7xl mx-auto mt-4 pt-4 border-t border-white/20 text-center text-sm">
+            <p>Designed with <span class="text-red-400">♥</span> for the Department of Sculpture, JMI</p>
+        </div>
+    </footer>
+    <!-- --- HTML STRUCTURE ENDS HERE --- -->
+
+    <!-- --- JAVASCRIPT LOGIC (External Script Equivalent) --- -->
+    <script>
+        // --- CONFIG & INIT ---
+        let currentUserId = null;
+        let students = [];
+        let faculty = [];
+        let notices = [];
+        let galleryImages = [];
+        let studios = [];
+        let isAuthenticated = false;
+        let activeView = 'home';
+        let activeAdminTab = 'students';
+        let editingStudentId = null;
+        let editingFacultyId = null;
+        let editingStudioId = null;
+        let monthlyAttendance = [];
+        let attendanceChart = null;
+        let refreshInterval = null;
+        let carouselIndex = 0;
+        let carouselInterval = null;
+
+        // DOM Elements
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const viewContainers = document.querySelectorAll('.view-container');
+        const modal = document.getElementById('generic-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+        const galleryModal = document.getElementById('gallery-modal');
+
+        // --- STUDIO DATA ---
+        function createStudioPlaceholder(text, index) {
+            const width = 400;
+            const height = 250;
+            const backgroundColors = ['065f46', '047857', '10b981', '34d399'];
+            const bgColor = backgroundColors[index % backgroundColors.length];
+            return `https://placehold.co/${width}x${height}/${bgColor}/ffffff?text=${encodeURIComponent(text.toUpperCase())}`;
+        }
+
+        // Initialize with 12 studios
+        studios = [
+            { id: 'dp_roy', name: 'D P Roy Choudhary life study lab', description: 'Dedicated space for figurative sculpting and anatomical study, honoring the master figure sculptor D. P. Roy Choudhury.', images: [
+                createStudioPlaceholder('Live Model Study', 0), createStudioPlaceholder('Clay Torso', 1), createStudioPlaceholder('Armature Setup', 2), createStudioPlaceholder('Figurative Workshop', 3)
+            ]},
+            { id: 'sankho_chaudhuri', name: 'Sankho Chaudhuri portrait lab', description: 'Focuses on the art of portraiture, bust creation, and exploring modern sculptural forms, named after Sankho Chaudhuri.', images: [
+                createStudioPlaceholder('Portrait Busts', 4), createStudioPlaceholder('Head Modeling', 5), createStudioPlaceholder('Facial Planes', 6), createStudioPlaceholder('Sankho Style', 7)
+            ]},
+            { id: 'meera_mukherjee', name: 'Meera Mukherjee soft material design lab', description: 'Specialized lab for exploring soft and unconventional materials like fiber, textiles, paper, and mixed media in the style of Meera Mukherjee.', images: [
+                createStudioPlaceholder('Soft Materials', 8), createStudioPlaceholder('Fiber Sculpture', 9), createStudioPlaceholder('Textile Art', 10), createStudioPlaceholder('Design Patterns', 11)
+            ]},
+            { id: 'ramkinkar_baij', name: 'Ramkinkar baij cement exploration lab', description: 'The outdoor and indoor facility dedicated to large-scale cement, concrete, and rough-cast sculpture, influenced by Ramkinkar Baij\'s pioneering spirit.', images: [
+                createStudioPlaceholder('Cement Casting', 12), createStudioPlaceholder('Concrete Mix', 13), createStudioPlaceholder('Large Scale Form', 14), createStudioPlaceholder('Outdoor Work', 15)
+            ]},
+            { id: 'balbir_singh_katt', name: 'Balbir Singh katt stone carving open court', description: 'An open-air court equipped with specialized tools and gantry systems for working with marble, sandstone, and granite, named after the prominent stone sculptor B. S. Katt.', images: [
+                createStudioPlaceholder('Stone Carving', 16), createStudioPlaceholder('Quarry Tools', 17), createStudioPlaceholder('Marble Sculpture', 18), createStudioPlaceholder('Dust Extraction', 19)
+            ]},
+            { id: 'jitish_kalat', name: 'Jitish kalat experimental medium sculture lab', description: 'A flexible lab space encouraging experimentation with digital media, light, kinetic elements, and complex installations, inspired by Jitish Kalat.', images: [
+                createStudioPlaceholder('Kinetic Art', 20), createStudioPlaceholder('Light Installation', 21), createStudioPlaceholder('Experimental Media', 22), createStudioPlaceholder('Digital Print', 23)
+            ]},
+            { id: 'clay_exploration', name: 'Clay exploration design lab', description: 'The general-purpose clay studio for initial modeling, coil building, wheel throwing, and preparatory work before final material transfer.', images: [
+                createStudioPlaceholder('Clay Modeling', 24), createStudioPlaceholder('Pottery Wheels', 25), createStudioPlaceholder('Drying Racks', 26), createStudioPlaceholder('Kiln Area', 27)
+            ]},
+            { id: 'foundation_practical', name: 'Foundation practical/classroom lab', description: 'Dedicated classroom and practical area for first-year students, focusing on fundamental principles, drawing, and basic 3D concepts.', images: [
+                createStudioPlaceholder('Foundation Class', 28), createStudioPlaceholder('Basic Tools', 29), createStudioPlaceholder('Conceptual Drawing', 30), createStudioPlaceholder('Teaching Area', 31)
+            ]},
+            { id: 'master_final', name: 'Master final classroom', description: 'A highly focused and secure studio space reserved for Master\'s program students completing their final thesis works and exhibition pieces.', images: [
+                createStudioPlaceholder('MFA Final Thesis', 32), createStudioPlaceholder('Large Studio Space', 33), createStudioPlaceholder('Critique Setup', 34), createStudioPlaceholder('Finished Works', 35)
+            ]},
+            { id: 'master_previous', name: 'Masters previous classroom', description: 'Studio space dedicated to second-year Master\'s students for advanced projects and sustained creative research.', images: [
+                createStudioPlaceholder('MFA Research', 36), createStudioPlaceholder('Advanced Projects', 37), createStudioPlaceholder('Graduate Work', 38), createStudioPlaceholder('Discussion Area', 39)
+            ]},
+            { id: 'ks_radhakrishnan', name: 'K S Radhakrishnan metal casting open court', description: 'The primary metal foundry area, utilizing lost-wax and sand casting techniques for bronze and aluminum sculpture, named after K. S. Radhakrishnan.', images: [
+                createStudioPlaceholder('Bronze Casting', 40), createStudioPlaceholder('Foundry Furnace', 41), createStudioPlaceholder('Metal Pour', 42), createStudioPlaceholder('Grinding Area', 43)
+            ]},
+            { id: 'sudarshan_reddy', name: 'Sudarshan Reddy wood carving open court', description: 'Open court designated for heavy-duty power carving, joining, and large-scale timber construction, honoring the wood sculptor Sudarshan Reddy.', images: [
+                createStudioPlaceholder('Wood Carving', 44), createStudioPlaceholder('Chainsaw Tools', 45), createStudioPlaceholder('Timber Assembly', 46), createStudioPlaceholder('Wood Joinery', 47)
+            ]}
+        ];
+
+        // --- CORE APPLICATION FLOW (VIEW SWITCHING) ---
+        window.renderView = function(viewId, isAuthCheck = false) {
+            activeView = viewId;
+            // Hide all view containers
+            viewContainers.forEach(container => container.classList.add('hidden'));
+
+            // Show the requested view
+            const targetView = document.getElementById(viewId + '-view');
+            if (targetView) {
+                targetView.classList.remove('hidden');
+                // Special actions on view change
+                if (viewId === 'admin-dashboard') {
+                    changeAdminTab(activeAdminTab);
+                    document.getElementById('admin-sidebar').classList.remove('hidden');
+                } else {
+                    document.getElementById('admin-sidebar').classList.add('hidden');
+                }
+                if (viewId === 'attendance') {
+                    renderStudentListForAttendance();
+                    // Start auto-refresh when attendance view is opened
+                    startAutoRefresh();
+                } else {
+                    // Stop auto-refresh when leaving attendance view
+                    stopAutoRefresh();
+                }
+                if (viewId === 'studio-tour') {
+                    renderStudioList(); // NEW: Render the studio list
+                }
+                if (viewId === 'home') {
+                    // Initialize carousel on home page
+                    initCarousel();
+                }
+                if (viewId === 'faculty-staff-public') {
+                    renderFacultyCards(); // NEW: Render faculty cards on public view
+                }
+            } else {
+                console.error("View not found:", viewId);
+                document.getElementById('home-view').classList.remove('hidden');
+                // Stop auto-refresh when leaving attendance view
+                stopAutoRefresh();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            lucide.createIcons(); // Re-render icons after DOM update
+        };
+
+        // --- IMAGE CAROUSEL FUNCTIONALITY ---
+        function initCarousel() {
+            // Clear any existing interval
+            if (carouselInterval) {
+                clearInterval(carouselInterval);
+            }
+            
+            // Initialize carousel indicators
+            const indicatorsContainer = document.getElementById('carousel-indicators');
+            indicatorsContainer.innerHTML = '';
+            
+            const carouselItems = document.querySelectorAll('.carousel-item');
+            carouselItems.forEach((_, index) => {
+                const indicator = document.createElement('div');
+                indicator.className = 'indicator';
+                if (index === 0) indicator.classList.add('active');
+                indicator.onclick = () => goToSlide(index);
+                indicatorsContainer.appendChild(indicator);
+            });
+            
+            // Start auto-rotation
+            carouselInterval = setInterval(() => {
+                changeSlide(1);
+            }, 5000);
+        }
+
+        function changeSlide(direction) {
+            const carouselInner = document.querySelector('.carousel-inner');
+            const items = document.querySelectorAll('.carousel-item');
+            const indicators = document.querySelectorAll('.indicator');
+            
+            if (direction === 1) {
+                carouselIndex = (carouselIndex + 1) % items.length;
+            } else {
+                carouselIndex = (carouselIndex - 1 + items.length) % items.length;
+            }
+            
+            carouselInner.style.transform = `translateX(-${carouselIndex * 100}%)`;
+            
+            // Update indicators
+            indicators.forEach((indicator, index) => {
+                if (index === carouselIndex) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
+            });
+        }
+
+        function goToSlide(index) {
+            carouselIndex = index;
+            const carouselInner = document.querySelector('.carousel-inner');
+            const indicators = document.querySelectorAll('.indicator');
+            
+            carouselInner.style.transform = `translateX(-${carouselIndex * 100}%)`;
+            
+            // Update indicators
+            indicators.forEach((indicator, i) => {
+                if (i === carouselIndex) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
+            });
+        }
+
+        // --- STUDIO TOUR LOGIC (NEW) ---
+        function renderStudioList() {
+            const container = document.getElementById('studio-list-container');
+            container.innerHTML = '';
+            
+            studios.forEach((studio, index) => {
+                const card = document.createElement('div');
+                card.className = 'studio-card bg-white p-5 rounded-xl shadow-lg border-l-4 border-emerald-600 cursor-pointer';
+                card.onclick = () => showStudioGallery(studio.id);
+                
+                card.innerHTML = `
+                    <div class="flex items-center space-x-3 mb-3">
+                        <span data-lucide="camera" class="w-6 h-6 link-primary flex-shrink-0"></span>
+                        <h4 class="text-xl font-bold text-gray-800">${index + 1}. ${studio.name}</h4>
+                    </div>
+                    <p class="text-sm text-gray-600">${studio.description}</p>
+                    <button class="mt-3 text-sm font-semibold text-emerald-600 hover:text-emerald-700 flex items-center space-x-1">
+                        <span>View Gallery</span>
+                        <span data-lucide="arrow-right" class="w-4 h-4"></span>
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        window.showStudioGallery = function(studioId) {
+            const studio = studios.find(s => s.id === studioId);
+            if (!studio) {
+                console.error("Studio data not found for ID:", studioId);
+                return;
+            }
+
+            document.getElementById('gallery-title').textContent = studio.name + " - Image Gallery";
+            const galleryGrid = document.getElementById('gallery-grid');
+            galleryGrid.innerHTML = '';
+
+            studio.images.forEach(url => {
+                galleryGrid.innerHTML += `
+                    <div class="rounded-xl overflow-hidden shadow-lg border-4 border-gray-100 transform hover:scale-[1.02] transition-transform duration-300">
+                        <img src="${url}" alt="Studio image" class="w-full h-48 object-cover">
+                        <div class="p-2 bg-gray-50 text-xs text-center text-gray-600">${url.split('?text=')[1].replace(/%20/g, ' ')}</div>
+                    </div>
+                `;
+            });
+
+            galleryModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling the body behind the modal
+            lucide.createIcons();
+        };
+
+        window.closeGalleryModal = function() {
+            galleryModal.classList.add('hidden');
+            document.body.style.overflow = '';
+        };
+
+        // --- DUMMY DATA INITIALIZATION ---
+        function initializeDummyData() {
+            // Initialize dummy students
+            students = [
+                { id: 'sc001', name: 'Rahul Sharma', studentId: 'SC001', enrollmentNumber: 'ENR001', course: 'BFA Sculpture', attendancePercentage: 95, photo: 'https://placehold.co/128x128/065f46/ffffff?text=RS' },
+                { id: 'sc002', name: 'Priya Patel', studentId: 'SC002', enrollmentNumber: 'ENR002', course: 'BFA Sculpture', attendancePercentage: 85, photo: 'https://placehold.co/128x128/065f46/ffffff?text=PP' },
+                { id: 'sc003', name: 'Amit Kumar', studentId: 'SC003', enrollmentNumber: 'ENR003', course: 'MFA Sculpture', attendancePercentage: 70, photo: 'https://placehold.co/128x128/065f46/ffffff?text=AK' },
+                { id: 'sc004', name: 'Sneha Gupta', studentId: 'SC004', enrollmentNumber: 'ENR004', course: 'BFA Sculpture', attendancePercentage: 65, photo: 'https://placehold.co/128x128/065f46/ffffff?text=SG' },
+                { id: 'sc005', name: 'Rajesh Verma', studentId: 'SC005', enrollmentNumber: 'ENR005', course: 'MFA Sculpture', attendancePercentage: 55, photo: 'https://placehold.co/128x128/065f46/ffffff?text=RV' }
+            ];
+
+            // Initialize dummy faculty
+            faculty = [
+                { id: 'f001', name: 'Dr. Ramesh Singh', designation: 'Professor', photo: 'https://placehold.co/100x100/065f46/ffffff?text=RS' },
+                { id: 'f002', name: 'Prof. Priya Sharma', designation: 'Associate Professor', photo: 'https://placehold.co/100x100/065f46/ffffff?text=PS' },
+                { id: 'f003', name: 'Dr. Anil Kumar', designation: 'Assistant Professor', photo: 'https://placehold.co/100x100/065f46/ffffff?text=AK' }
+            ];
+
+            // Initialize dummy notices
+            notices = [
+                { id: 'n001', title: 'Semester Exam Schedule', content: 'The semester examination schedule has been finalized and is available on the notice board.', date: '2023-09-15' },
+                { id: 'n002', title: 'New Studio Opening', content: 'The new clay exploration lab is now open for student use.', date: '2023-09-10' },
+                { id: 'n003', title: 'Library Hours Extended', content: 'The department library hours have been extended to 10 PM on weekdays.', date: '2023-09-05' }
+            ];
+            
+            // Initialize dummy gallery images
+            galleryImages = [
+                { id: 'g001', title: 'Student Workshop', description: 'Hands-on learning in our state-of-the-art studios', image: 'https://placehold.co/400x300/065f46/ffffff?text=Student+Workshop' },
+                { id: 'g002', title: 'Faculty Workshop', description: 'Expert-led sessions for advanced techniques', image: 'https://placehold.co/400x300/047857/ffffff?text=Faculty+Workshop' },
+                { id: 'g003', title: 'Annual Exhibition', description: 'Student works displayed in our gallery', image: 'https://placehold.co/400x300/10b981/ffffff?text=Exhibition' }
+            ];
+            
+            // Initialize monthly attendance data
+            monthlyAttendance = [
+                { id: 'att001', studentId: 'sc001', name: 'Rahul Sharma', month: 'September', year: 2023, percentage: 95 },
+                { id: 'att002', studentId: 'sc002', name: 'Priya Patel', month: 'September', year: 2023, percentage: 85 },
+                { id: 'att003', studentId: 'sc003', name: 'Amit Kumar', month: 'September', year: 2023, percentage: 70 },
+                { id: 'att004', studentId: 'sc004', name: 'Sneha Gupta', month: 'September', year: 2023, percentage: 65 },
+                { id: 'att005', studentId: 'sc005', name: 'Rajesh Verma', month: 'September', year: 2023, percentage: 55 }
+            ];
+            
+            // Render initial data
+            renderStudentList();
+            renderMonthlyAttendanceList();
+            renderGalleryList();
+            renderStudioList();
+            renderNoticesForHome();
+            renderFacultyCards(); // NEW: Render faculty cards on home page
+        }
+
+        // --- ATTENDANCE VIEW LOGIC ---
+        function renderStudentListForAttendance() {
+            const listContainer = document.getElementById('student-list');
+            listContainer.innerHTML = '';
+            
+            if (students.length === 0) {
+                listContainer.innerHTML = `<p class="text-center text-gray-500">No student records available.</p>`;
+                return;
+            }
+
+            students.forEach(student => {
+                const item = document.createElement('div');
+                item.className = 'student-list-item p-3 cursor-pointer rounded-lg hover:bg-gray-100 transition';
+                item.setAttribute('data-student-id', student.id);
+                item.innerHTML = `<p class="font-medium text-gray-800">${student.name}</p><p class="text-xs text-gray-500">${student.studentId}</p>`;
+                item.onclick = (e) => {
+                    displayStudentDetails(student.id, e.currentTarget);
+                    showStudentAttendance(student.id); // NEW: Navigate to student attendance detail
+                };
+                listContainer.appendChild(item);
+            });
+        }
+
+        function displayStudentDetails(studentId, clickedElement) {
+            const student = students.find(s => s.id === studentId);
+            const detailCard = document.getElementById('student-details-card');
+            const placeholder = document.getElementById('student-detail-placeholder');
+            const studentListItems = document.querySelectorAll('.student-list-item');
+
+            // Remove active class from all items
+            studentListItems.forEach(item => item.classList.remove('active'));
+            
+            // Add active class to clicked item
+            if (clickedElement) {
+                clickedElement.classList.add('active');
+            }
+
+            if (!student) {
+                placeholder.classList.remove('hidden');
+                detailCard.innerHTML = `<p class="text-gray-500 text-center text-lg">Student data not found.</p>`;
+                return;
+            }
+
+            placeholder.classList.add('hidden');
+            const attendancePercentage = student.attendancePercentage || Math.floor(Math.random() * 100);
+            const getRemarkAndClass = (percentage) => {
+                if (percentage >= 90) return { remark: 'Excellent', className: 'remark-excellent' };
+                if (percentage >= 75) return { remark: 'Good', className: 'remark-good' };
+                if (percentage >= 60) return { remark: 'Satisfactory (Warning)', className: 'remark-satisfactory' };
+                return { remark: 'Critical (Ineligible for Exam)', className: 'remark-critical' };
+            };
+            const { remark, className } = getRemarkAndClass(attendancePercentage);
+
+            detailCard.innerHTML = `
+                <div class="w-full">
+                    <div class="flex items-center space-x-4 border-b pb-4 mb-4">
+                        <img class="w-16 h-16 rounded-full object-cover border-2 border-emerald-500" src="${student.photo}" alt="${student.name}">
+                        <div>
+                            <h4 class="text-2xl font-bold text-gray-800">${student.name}</h4>
+                            <p class="text-sm text-gray-500">Student ID: ${student.studentId}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <p class="font-semibold text-gray-600">Course/Class:</p>
+                            <p class="text-gray-800">${student.course || 'BFA Sculpture'}</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-600">Enrollment No.:</p>
+                            <p class="text-gray-800">${student.enrollmentNumber || 'N/A'}</p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-lg shadow-inner ${className}">
+                        <h5 class="text-lg font-bold mb-2 flex items-center space-x-2">
+                            <span data-lucide="shield-check" class="w-5 h-5"></span>
+                            <span>Attendance Status</span>
+                        </h5>
+                        <p class="text-2xl font-extrabold">${attendancePercentage}%</p>
+                        <p class="text-sm mt-1">Eligibility Remark: <span class="font-semibold">${remark}</span></p>
+                    </div>
+
+                    <p class="mt-4 text-xs text-gray-500">Note: This is a public view for quick status check. Official records are maintained by the administration.</p>
+                </div>
+            `;
+            
+            // Create or update the chart when a student is selected
+            createAttendanceChart(studentId);
+            lucide.createIcons();
+        }
+
+        // NEW: Function to show student attendance details
+        window.showStudentAttendance = function(studentId) {
+            const student = students.find(s => s.id === studentId);
+            if (!student) return;
+            
+            // Update header with student name
+            document.getElementById('student-name-header').textContent = student.name;
+            
+            // Get attendance records for this student
+            const studentAttendance = monthlyAttendance.filter(record => record.studentId === student.studentId);
+            
+            // Populate attendance list
+            const attendanceList = document.getElementById('student-attendance-list');
+            attendanceList.innerHTML = '';
+            
+            if (studentAttendance.length === 0) {
+                attendanceList.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">No attendance records found</td></tr>';
+            } else {
+                studentAttendance.forEach(record => {
+                    const row = document.createElement('tr');
+                    const status = record.percentage >= 75 ? 'Eligible' : 'Not Eligible';
+                    const statusClass = record.percentage >= 75 ? 'text-green-600' : 'text-red-600';
+                    
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.month}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.year}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.percentage}%</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm ${statusClass}">${status}</td>
+                    `;
+                    attendanceList.appendChild(row);
+                });
+            }
+            
+            // Show the student attendance view
+            renderView('student-attendance-view');
+        };
+
+        // Create bar chart for monthly attendance
+        function createAttendanceChart(studentId) {
+            // Get student data
+            const student = students.find(s => s.id === studentId);
+            if (!student) return;
+            
+            // Get all attendance records for this student
+            const studentAttendance = monthlyAttendance.filter(record => record.studentId === student.studentId);
+            
+            // Prepare chart data
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                           'July', 'August', 'September', 'October', 'November', 'December'];
+            const attendanceData = months.map(month => {
+                const record = studentAttendance.find(r => r.month === month);
+                return record ? record.percentage : 0;
+            });
+            
+            // Destroy existing chart if it exists
+            if (attendanceChart) {
+                attendanceChart.destroy();
+            }
+            
+            // Get chart container
+            const ctx = document.getElementById('attendance-chart').getContext('2d');
+            
+            // Create new chart
+            attendanceChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: `Attendance for ${student.name}`,
+                        data: attendanceData,
+                        backgroundColor: 'rgba(4, 120, 87, 0.7)',
+                        borderColor: 'rgba(4, 120, 87, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Attendance Percentage (%)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Months'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: `Monthly Attendance for ${student.name}`
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- LOGIN HANDLERS ---
+        window.handleStudentLogin = function(event) {
+            event.preventDefault();
+            const identifier = document.getElementById('student-identifier').value;
+            const loginMsg = document.getElementById('student-login-msg');
+            
+            // Simple validation
+            if (!identifier.trim()) {
+                loginMsg.textContent = 'Please enter a student ID or name';
+                loginMsg.className = 'p-3 mb-4 rounded-lg text-sm text-center text-red-600 bg-red-50';
+                loginMsg.classList.remove('hidden');
+                return;
+            }
+            
+            // Find student
+            const student = students.find(s => 
+                s.studentId.toLowerCase() === identifier.toLowerCase() || 
+                s.name.toLowerCase() === identifier.toLowerCase()
+            );
+            
+            if (student) {
+                // Simulate successful login
+                loginMsg.textContent = `Welcome back, ${student.name}!`;
+                loginMsg.className = 'p-3 mb-4 rounded-lg text-sm text-center text-green-600 bg-green-50';
+                loginMsg.classList.remove('hidden');
+                
+                // Populate student dashboard
+                document.getElementById('student-name-display').textContent = student.name;
+                document.getElementById('student-id-display').textContent = student.studentId;
+                document.getElementById('enrollment-number').textContent = student.enrollmentNumber;
+                document.getElementById('exam-roll-number').textContent = 'EXAM001';
+                document.getElementById('admission-date').textContent = '2023-09-01';
+                document.getElementById('category-of-selection').textContent = 'General';
+                document.getElementById('student-course').textContent = student.course;
+                
+                // Show dashboard
+                setTimeout(() => {
+                    renderView('student-dashboard');
+                }, 1000);
+            } else {
+                loginMsg.textContent = 'Student not found. Please check your ID or name.';
+                loginMsg.className = 'p-3 mb-4 rounded-lg text-sm text-center text-red-600 bg-red-50';
+                loginMsg.classList.remove('hidden');
+            }
+        };
+
+        window.handleAdminLogin = function(event) {
+            event.preventDefault();
+            const adminId = document.getElementById('admin-id').value;
+            const password = document.getElementById('admin-password').value;
+            const loginMsg = document.getElementById('admin-login-msg');
+            
+            // Check for correct credentials
+            if (adminId === 'admin' && password === 'adminpass1234') {
+                loginMsg.textContent = 'Admin login successful!';
+                loginMsg.className = 'p-3 mb-4 rounded-lg text-sm text-center text-green-600 bg-green-50';
+                loginMsg.classList.remove('hidden');
+                
+                // Show admin dashboard
+                setTimeout(() => {
+                    renderView('admin-dashboard');
+                }, 1000);
+            } else {
+                loginMsg.textContent = 'Invalid admin credentials';
+                loginMsg.className = 'p-3 mb-4 rounded-lg text-sm text-center text-red-600 bg-red-50';
+                loginMsg.classList.remove('hidden');
+            }
+        };
+
+        window.handleAdminLogout = function() {
+            renderView('home');
+        };
+
+        // --- TAB NAVIGATION ---
+        window.changeAdminTab = function(tabName) {
+            activeAdminTab = tabName;
+            
+            // Update active tab button
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active-tab-btn');
+            });
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active-tab-btn');
+            
+            // Show the correct tab content
+            document.querySelectorAll('.admin-tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(`admin-content-${tabName}`).classList.remove('hidden');
+            
+            // Render data for the active tab
+            if (tabName === 'students') {
+                renderStudentList();
+            } else if (tabName === 'attendance') {
+                renderAttendanceList();
+            } else if (tabName === 'faculty') {
+                renderFacultyList();
+            } else if (tabName === 'gallery') {
+                renderGalleryList();
+            } else if (tabName === 'studios') {
+                renderStudioList();
+            } else if (tabName === 'content') {
+                // Populate content fields with current values
+                document.getElementById('content-intro').value = document.getElementById('intro-content').textContent;
+                document.getElementById('content-vision').value = document.getElementById('vision-content').textContent;
+            } else if (tabName === 'monthly-attendance') {
+                renderMonthlyAttendanceList();
+                populateAttendanceStudentDropdown();
+            }
+        };
+
+        // --- STUDENT MANAGEMENT FUNCTIONS ---
+        function renderStudentList() {
+            const studentList = document.getElementById('admin-student-list');
+            const noStudentsMsg = document.getElementById('no-admin-students');
+            
+            if (students.length === 0) {
+                studentList.innerHTML = '';
+                noStudentsMsg.classList.remove('hidden');
+                return;
+            }
+            
+            noStudentsMsg.classList.add('hidden');
+            studentList.innerHTML = '';
+            
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${student.studentId}</div>
+                        <div class="text-sm text-gray-500">${student.name}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${student.enrollmentNumber || 'N/A'}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="openStudentModal('edit', '${student.id}')" class="text-emerald-600 hover:text-emerald-900 mr-3">Edit</button>
+                        <button onclick="deleteStudent('${student.id}')" class="text-red-600 hover:text-red-900">Delete</button>
+                    </td>
+                `;
+                studentList.appendChild(row);
+            });
+        }
+
+        window.openStudentModal = function(mode, studentId = null) {
+            editingStudentId = studentId;
+            
+            if (mode === 'add') {
+                modalTitle.textContent = 'Add New Student';
+                modalContent.innerHTML = `
+                    <form id="student-form">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Student ID</label>
+                            <input type="text" id="student-id" class="w-full p-2 border border-gray-300 rounded" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                            <input type="text" id="student-name" class="w-full p-2 border border-gray-300 rounded" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Enrollment Number</label>
+                            <input type="text" id="student-enrollment" class="w-full p-2 border border-gray-300 rounded" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Course</label>
+                            <select id="student-course" class="w-full p-2 border border-gray-300 rounded" required>
+                                <option value="BFA Sculpture">BFA Sculpture</option>
+                                <option value="MFA Sculpture">MFA Sculpture</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Photo</label>
+                            <div class="photo-upload-container">
+                                <img id="student-photo-preview" class="photo-preview" src="https://placehold.co/128x128/065f46/ffffff?text=UPLOAD" alt="Student Photo">
+                                <input type="file" id="student-photo-upload" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded" onclick="closeModal()">Cancel</button>
+                            <button type="submit" class="btn-primary text-white px-4 py-2 rounded">Save Student</button>
+                        </div>
+                    </form>
+                `;
+                
+                document.getElementById('student-photo-upload').onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            document.getElementById('student-photo-preview').src = event.target.result;
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                };
+                
+                document.getElementById('student-form').onsubmit = function(e) {
+                    e.preventDefault();
+                    addStudent();
+                };
+            } else if (mode === 'edit' && studentId) {
+                const student = students.find(s => s.id === studentId);
+                if (!student) return;
+                
+                modalTitle.textContent = 'Edit Student';
+                modalContent.innerHTML = `
+                    <form id="student-form">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Student ID</label>
+                            <input type="text" id="student-id" class="w-full p-2 border border-gray-300 rounded" value="${student.studentId}" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                            <input type="text" id="student-name" class="w-full p-2 border border-gray-300 rounded" value="${student.name}" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Enrollment Number</label>
+                            <input type="text" id="student-enrollment" class="w-full p-2 border border-gray-300 rounded" value="${student.enrollmentNumber}" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Course</label>
+                            <select id="student-course" class="w-full p-2 border border-gray-300 rounded" required>
+                                <option value="BFA Sculpture" ${student.course === 'BFA Sculpture' ? 'selected' : ''}>BFA Sculpture</option>
+                                <option value="MFA Sculpture" ${student.course === 'MFA Sculpture' ? 'selected' : ''}>MFA Sculpture</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Photo</label>
+                            <div class="photo-upload-container">
+                                <img id="student-photo-preview" class="photo-preview" src="${student.photo}" alt="Student Photo">
+                                <input type="file" id="student-photo-upload" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded" onclick="closeModal()">Cancel</button>
+                            <button type="submit" class="btn-primary text-white px-4 py-2 rounded">Update Student</button>
+                        </div>
+                    </form>
+                `;
+                
+                document.getElementById('student-photo-upload').onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            document.getElementById('student-photo-preview').src = event.target.result;
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                };
+                
+                document.getElementById('student-form').onsubmit = function(e) {
+                    e.preventDefault();
+                    updateStudent(studentId);
+                };
+            }
+            
+            modal.classList.remove('hidden');
+        };
+
+        function addStudent() {
+            const studentId = document.getElementById('student-id').value;
+            const name = document.getElementById('student-name').value;
+            const enrollmentNumber = document.getElementById('student-enrollment').value;
+            const course = document.getElementById('student-course').value;
+            const photoInput = document.getElementById('student-photo-upload');
+            
+            // Check if student ID already exists
+            if (students.some(s => s.studentId === studentId)) {
+                alert('Student ID already exists!');
+                return;
+            }
+            
+            // Get photo URL from input
+            let photoUrl = 'https://placehold.co/128x128/065f46/ffffff?text=' + name.substring(0, 2).toUpperCase();
+            if (photoInput.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    photoUrl = e.target.result;
+                    // Create new student with photo
+                    const newStudent = {
+                        id: `sc${String(students.length + 1).padStart(3, '0')}`,
+                        studentId: studentId,
+                        name: name,
+                        enrollmentNumber: enrollmentNumber,
+                        course: course,
+                        attendancePercentage: 0,
+                        photo: photoUrl
+                    };
+                    
+                    students.push(newStudent);
+                    renderStudentList();
+                    closeModal();
+                    alert('Student added successfully!');
+                }
+                reader.readAsDataURL(photoInput.files[0]);
+            } else {
+                // Create new student with default photo
+                const newStudent = {
+                    id: `sc${String(students.length + 1).padStart(3, '0')}`,
+                    studentId: studentId,
+                    name: name,
+                    enrollmentNumber: enrollmentNumber,
+                    course: course,
+                    attendancePercentage: 0,
+                    photo: photoUrl
+                };
+                
+                students.push(newStudent);
+                renderStudentList();
+                closeModal();
+                alert('Student added successfully!');
+            }
+        }
+
+        function updateStudent(studentId) {
+            const student = students.find(s => s.id === studentId);
+            if (!student) return;
+            
+            student.studentId = document.getElementById('student-id').value;
+            student.name = document.getElementById('student-name').value;
+            student.enrollmentNumber = document.getElementById('student-enrollment').value;
+            student.course = document.getElementById('student-course').value;
+            
+            // Handle photo update
+            const photoInput = document.getElementById('student-photo-upload');
+            if (photoInput.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    student.photo = e.target.result;
+                    renderStudentList();
+                    closeModal();
+                    alert('Student updated successfully!');
+                }
+                reader.readAsDataURL(photoInput.files[0]);
+            } else {
+                renderStudentList();
+                closeModal();
+                alert('Student updated successfully!');
+            }
+        }
+
+        window.deleteStudent = function(studentId) {
+            if (confirm('Are you sure you want to delete this student?')) {
+                students = students.filter(s => s.id !== studentId);
+                renderStudentList();
+                alert('Student deleted successfully!');
+            }
+        };
+
+        // --- FACULTY MANAGEMENT FUNCTIONS ---
+        function renderFacultyList() {
+            const facultyList = document.getElementById('admin-faculty-list');
+            facultyList.innerHTML = '';
+            
+            if (faculty.length === 0) {
+                facultyList.innerHTML = '<tr><td colspan="3" class="px-6 py-4 text-center text-gray-500">No faculty members found</td></tr>';
+                return;
+            }
+            
+            faculty.forEach(member => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <img class="h-10 w-10 rounded-full object-cover" src="${member.photo}" alt="${member.name}">
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${member.name}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${member.designation}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="openFacultyModal('edit', '${member.id}')" class="text-emerald-600 hover:text-emerald-900 mr-3">Edit</button>
+                        <button onclick="deleteFaculty('${member.id}')" class="text-red-600 hover:text-red-900">Delete</button>
+                    </td>
+                `;
+                facultyList.appendChild(row);
+            });
+        }
+
+        // NEW: Function to render faculty cards for public view
+        function renderFacultyCards() {
+            const facultyContainer = document.getElementById('public-faculty-list');
+            facultyContainer.innerHTML = '';
+            
+            if (faculty.length === 0) {
+                facultyContainer.innerHTML = '<p class="col-span-full text-center text-gray-500">No faculty members available</p>';
+                return;
+            }
+            
+            faculty.forEach(member => {
+                const card = document.createElement('div');
+                card.className = 'futuristic-card bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-xl';
+                card.innerHTML = `
+                    <div class="relative">
+                        <img src="${member.photo}" alt="${member.name}" class="w-full h-64 object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-white">${member.name}</h3>
+                                <p class="text-emerald-300">${member.designation}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-center">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800">
+                                <span class="status-indicator status-active"></span>
+                                Active
+                            </span>
+                            <button class="text-emerald-600 hover:text-emerald-800 text-sm font-medium">
+                                View Profile
+                            </button>
+                        </div>
+                    </div>
+                `;
+                facultyContainer.appendChild(card);
+            });
+        }
+
+        window.openFacultyModal = function(mode, facultyId = null) {
+            editingFacultyId = facultyId;
+            
+            if (mode === 'add') {
+                modalTitle.textContent = 'Add New Faculty/Staff Member';
+                modalContent.innerHTML = `
+                    <form id="faculty-form">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                            <input type="text" id="faculty-name" class="w-full p-2 border border-gray-300 rounded" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Designation</label>
+                            <input type="text" id="faculty-designation" class="w-full p-2 border border-gray-300 rounded" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Photo</label>
+                            <div class="photo-upload-container">
+                                <img id="faculty-photo-preview" class="photo-preview" src="https://placehold.co/100x100/065f46/ffffff?text=UPLOAD" alt="Faculty Photo">
+                                <input type="file" id="faculty-photo-upload" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded" onclick="closeModal()">Cancel</button>
+                            <button type="submit" class="btn-primary text-white px-4 py-2 rounded">Save Member</button>
+                        </div>
+                    </form>
+                `;
+                
+                document.getElementById('faculty-photo-upload').onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            document.getElementById('faculty-photo-preview').src = event.target.result;
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                };
+                
+                document.getElementById('faculty-form').onsubmit = function(e) {
+                    e.preventDefault();
+                    addFaculty();
+                };
+            } else if (mode === 'edit' && facultyId) {
+                const member = faculty.find(f => f.id === facultyId);
+                if (!member) return;
+                
+                modalTitle.textContent = 'Edit Faculty/Staff Member';
+                modalContent.innerHTML = `
+                    <form id="faculty-form">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                            <input type="text" id="faculty-name" class="w-full p-2 border border-gray-300 rounded" value="${member.name}" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Designation</label>
+                            <input type="text" id="faculty-designation" class="w-full p-2 border border-gray-300 rounded" value="${member.designation}" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Photo</label>
+                            <div class="photo-upload-container">
+                                <img id="faculty-photo-preview" class="photo-preview" src="${member.photo}" alt="Faculty Photo">
+                                <input type="file" id="faculty-photo-upload" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded" onclick="closeModal()">Cancel</button>
+                            <button type="submit" class="btn-primary text-white px-4 py-2 rounded">Update Member</button>
+                        </div>
+                    </form>
+                `;
+                
+                document.getElementById('faculty-photo-upload').onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            document.getElementById('faculty-photo-preview').src = event.target.result;
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                };
+                
+                document.getElementById('faculty-form').onsubmit = function(e) {
+                    e.preventDefault();
+                    updateFaculty(facultyId);
+                };
+            }
+            
+            modal.classList.remove('hidden');
+        };
+
+        function addFaculty() {
+            const name = document.getElementById('faculty-name').value;
+            const designation = document.getElementById('faculty-designation').value;
+            const photoInput = document.getElementById('faculty-photo-upload');
+            
+            // Get photo URL from input
+            let photoUrl = 'https://placehold.co/100x100/065f46/ffffff?text=' + name.substring(0, 2).toUpperCase();
+            if (photoInput.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    photoUrl = e.target.result;
+                    // Create new faculty member
+                    const newMember = {
+                        id: `f${String(faculty.length + 1).padStart(3, '0')}`,
+                        name: name,
+                        designation: designation,
+                        photo: photoUrl
+                    };
+                    
+                    faculty.push(newMember);
+                    renderFacultyList();
+                    closeModal();
+                    alert('Faculty/Staff member added successfully!');
+                }
+                reader.readAsDataURL(photoInput.files[0]);
+            } else {
+                // Create new faculty member with default photo
+                const newMember = {
+                    id: `f${String(faculty.length + 1).padStart(3, '0')}`,
+                    name: name,
+                    designation: designation,
+                    photo: photoUrl
+                };
+                
+                faculty.push(newMember);
+                renderFacultyList();
+                closeModal();
+                alert('Faculty/Staff member added successfully!');
+            }
+        }
+
+        function updateFaculty(facultyId) {
+            const member = faculty.find(f => f.id === facultyId);
+            if (!member) return;
+            
+            member.name = document.getElementById('faculty-name').value;
+            member.designation = document.getElementById('faculty-designation').value;
+            
+            // Handle photo update
+            const photoInput = document.getElementById('faculty-photo-upload');
+            if (photoInput.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    member.photo = e.target.result;
+                    renderFacultyList();
+                    closeModal();
+                    alert('Faculty/Staff member updated successfully!');
+                }
+                reader.readAsDataURL(photoInput.files[0]);
+            } else {
+                renderFacultyList();
+                closeModal();
+                alert('Faculty/Staff member updated successfully!');
+            }
+        }
+
+        window.deleteFaculty = function(facultyId) {
+            if (confirm('Are you sure you want to delete this faculty member?')) {
+                faculty = faculty.filter(f => f.id !== facultyId);
+                renderFacultyList();
+                alert('Faculty/Staff member deleted successfully!');
+            }
+        };
+
+        // --- MODAL HANDLERS ---
+        window.closeModal = function() {
+            modal.classList.add('hidden');
+        };
+
+        // --- MONTHLY ATTENDANCE FUNCTIONS ---
+        function renderMonthlyAttendanceList() {
+            const attendanceList = document.getElementById('admin-attendance-list-monthly');
+            attendanceList.innerHTML = '';
+            
+            if (monthlyAttendance.length === 0) {
+                attendanceList.innerHTML = '<tr><td colspan="6" class="px-3 py-4 text-center text-gray-500">No attendance records found</td></tr>';
+                return;
+            }
+            
+            monthlyAttendance.forEach(record => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.studentId}</td>
+                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">${record.name}</td>
+                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">${record.month}</td>
+                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">${record.year}</td>
+                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">${record.percentage}%</td>
+                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="editMonthlyAttendance('${record.id}')" class="text-emerald-600 hover:text-emerald-900 mr-3">Edit</button>
+                        <button onclick="deleteMonthlyAttendance('${record.id}')" class="text-red-600 hover:text-red-900">Delete</button>
+                    </td>
+                `;
+                attendanceList.appendChild(row);
+            });
+        }
+
+        function populateAttendanceStudentDropdown() {
+            const select = document.getElementById('attendance-student-id');
+            select.innerHTML = '<option value="">Select Student</option>';
+            
+            students.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student.studentId;
+                option.textContent = `${student.studentId} - ${student.name}`;
+                select.appendChild(option);
+            });
+        }
+
+        // Handle attendance form submission
+        document.getElementById('attendance-form').onsubmit = function(e) {
+            e.preventDefault();
+            saveMonthlyAttendance();
+        };
+
+        // Reset attendance form
+        document.getElementById('reset-attendance-btn').onclick = function() {
+            document.getElementById('attendance-form').reset();
+            document.getElementById('attendance-student-id').value = '';
+        };
+
+        // Save monthly attendance record
+        function saveMonthlyAttendance() {
+            const studentId = document.getElementById('attendance-student-id').value;
+            const month = document.getElementById('attendance-month').value;
+            const year = document.getElementById('attendance-year').value;
+            const percentage = document.getElementById('attendance-percentage').value;
+            
+            if (!studentId || !month || !year || !percentage) {
+                alert('Please fill all fields');
+                return;
+            }
+            
+            // Find student details
+            const student = students.find(s => s.studentId === studentId);
+            if (!student) {
+                alert('Student not found');
+                return;
+            }
+            
+            // Create new attendance record
+            const newRecord = {
+                id: `att${String(monthlyAttendance.length + 1).padStart(3, '0')}`,
+                studentId: studentId,
+                name: student.name,
+                month: month,
+                year: year,
+                percentage: parseInt(percentage)
+            };
+            
+            // Add to records
+            monthlyAttendance.push(newRecord);
+            
+            // Update UI
+            renderMonthlyAttendanceList();
+            populateAttendanceStudentDropdown();
+            
+            // Reset form
+            document.getElementById('attendance-form').reset();
+            document.getElementById('attendance-student-id').value = '';
+            
+            alert('Attendance record saved successfully!');
+        }
+
+        // Edit monthly attendance record
+        function editMonthlyAttendance(recordId) {
+            const record = monthlyAttendance.find(r => r.id === recordId);
+            if (!record) return;
+            
+            // Populate form with record data
+            document.getElementById('attendance-student-id').value = record.studentId;
+            document.getElementById('attendance-month').value = record.month;
+            document.getElementById('attendance-year').value = record.year;
+            document.getElementById('attendance-percentage').value = record.percentage;
+            
+            // Remove the record from list for replacement
+            monthlyAttendance = monthlyAttendance.filter(r => r.id !== recordId);
+            renderMonthlyAttendanceList();
+            
+            alert('Edit mode activated. Save changes to update the record.');
+        }
+
+        // Delete monthly attendance record
+        function deleteMonthlyAttendance(recordId) {
+            if (confirm('Are you sure you want to delete this attendance record?')) {
+                monthlyAttendance = monthlyAttendance.filter(r => r.id !== recordId);
+                renderMonthlyAttendanceList();
+                alert('Attendance record deleted successfully!');
+            }
+        }
+
+        // --- GALLERY MANAGEMENT FUNCTIONS ---
+        function renderGalleryList() {
+            const galleryList = document.getElementById('admin-gallery-list');
+            galleryList.innerHTML = '';
+            
+            if (galleryImages.length === 0) {
+                galleryList.innerHTML = '<tr><td colspan="4" class="px-3 py-4 text-center text-gray-500">No gallery images found</td></tr>';
+                return;
+            }
+            
+            galleryImages.forEach(image => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-3 py-4 whitespace-nowrap">
+                        <img src="${image.image}" alt="${image.title}" class="w-16 h-16 object-cover rounded">
+                    </td>
+                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${image.title}</td>
+                    <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">${image.description}</td>
+                    <td class="px-3 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="deleteGalleryImage('${image.id}')" class="text-red-600 hover:text-red-900">Delete</button>
+                    </td>
+                `;
+                galleryList.appendChild(row);
+            });
+        }
+
+        // Handle gallery upload form submission
+        document.getElementById('gallery-upload-form').onsubmit = function(e) {
+            e.preventDefault();
+            uploadGalleryImage();
+        };
+
+        function uploadGalleryImage() {
+            const title = document.getElementById('gallery-title').value;
+            const description = document.getElementById('gallery-description').value;
+            const imageInput = document.getElementById('gallery-image');
+            
+            if (!title || !description || !imageInput.files[0]) {
+                alert('Please fill all fields and select an image');
+                return;
+            }
+            
+            // Create new gallery image
+            const newImage = {
+                id: `g${String(galleryImages.length + 1).padStart(3, '0')}`,
+                title: title,
+                description: description,
+                image: URL.createObjectURL(imageInput.files[0])
+            };
+            
+            // Add to gallery
+            galleryImages.push(newImage);
+            
+            // Update UI
+            renderGalleryList();
+            
+            // Reset form
+            document.getElementById('gallery-upload-form').reset();
+            document.getElementById('gallery-preview').src = 'https://placehold.co/128x128/065f46/ffffff?text=UPLOAD';
+            
+            alert('Gallery image uploaded successfully!');
+        }
+
+        function deleteGalleryImage(imageId) {
+            if (confirm('Are you sure you want to delete this gallery image?')) {
+                galleryImages = galleryImages.filter(img => img.id !== imageId);
+                renderGalleryList();
+                alert('Gallery image deleted successfully!');
+            }
+        }
+
+        // --- CONTENT MANAGEMENT FUNCTIONS ---
+        document.getElementById('content-form').onsubmit = function(e) {
+            e.preventDefault();
+            updateHomepageContent();
+        };
+
+        document.getElementById('save-carousel-btn').onclick = function() {
+            // In a real app, this would save carousel images to backend
+            alert('Carousel images updated successfully!');
+        };
+
+        function updateHomepageContent() {
+            const intro = document.getElementById('content-intro').value;
+            const vision = document.getElementById('content-vision').value;
+            
+            // Update homepage content
+            document.getElementById('intro-content').textContent = intro;
+            document.getElementById('vision-content').textContent = vision;
+            
+            alert('Homepage content updated successfully!');
+        }
+
+        // --- STUDIO MANAGEMENT FUNCTIONS ---
+        function renderStudioList() {
+            const studioList = document.getElementById('admin-studio-list');
+            studioList.innerHTML = '';
+            
+            if (studios.length === 0) {
+                studioList.innerHTML = '<tr><td colspan="3" class="px-6 py-4 text-center text-gray-500">No studios found</td></tr>';
+                return;
+            }
+            
+            studios.forEach(studio => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${studio.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${studio.description.substring(0, 50)}...</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="openStudioModal('edit', '${studio.id}')" class="text-emerald-600 hover:text-emerald-900 mr-3">Edit</button>
+                        <button onclick="deleteStudio('${studio.id}')" class="text-red-600 hover:text-red-900">Delete</button>
+                    </td>
+                `;
+                studioList.appendChild(row);
+            });
+        }
+
+        window.openStudioModal = function(mode, studioId = null) {
+            editingStudioId = studioId;
+            
+            if (mode === 'add') {
+                modalTitle.textContent = 'Add New Studio';
+                modalContent.innerHTML = `
+                    <form id="studio-form">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Studio Name</label>
+                            <input type="text" id="studio-name" class="w-full p-2 border border-gray-300 rounded" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <textarea id="studio-description" class="w-full p-2 border border-gray-300 rounded" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Image Gallery</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Image 1</label>
+                                    <div class="photo-upload-container">
+                                        <img id="studio-preview-1" class="photo-preview" src="https://placehold.co/128x128/065f46/ffffff?text=UPLOAD" alt="Studio Image">
+                                        <input type="file" id="studio-image-1" accept="image/*">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Image 2</label>
+                                    <div class="photo-upload-container">
+                                        <img id="studio-preview-2" class="photo-preview" src="https://placehold.co/128x128/065f46/ffffff?text=UPLOAD" alt="Studio Image">
+                                        <input type="file" id="studio-image-2" accept="image/*">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Image 3</label>
+                                    <div class="photo-upload-container">
+                                        <img id="studio-preview-3" class="photo-preview" src="https://placehold.co/128x128/065f46/ffffff?text=UPLOAD" alt="Studio Image">
+                                        <input type="file" id="studio-image-3" accept="image/*">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Image 4</label>
+                                    <div class="photo-upload-container">
+                                        <img id="studio-preview-4" class="photo-preview" src="https://placehold.co/128x128/065f46/ffffff?text=UPLOAD" alt="Studio Image">
+                                        <input type="file" id="studio-image-4" accept="image/*">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded" onclick="closeModal()">Cancel</button>
+                            <button type="submit" class="btn-primary text-white px-4 py-2 rounded">Save Studio</button>
+                        </div>
+                    </form>
+                `;
+                
+                // Setup image upload handlers
+                document.getElementById('studio-image-1').onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            document.getElementById('studio-preview-1').src = event.target.result;
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                };
+                
+                document.getElementById('studio-image-2').onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            document.getElementById('studio-preview-2').src = event.target.result;
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                };
+                
+                document.getElementById('studio-image-3').onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            document.getElementById('studio-preview-3').src = event.target.result;
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                };
+                
+                document.getElementById('studio-image-4').onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            document.getElementById('studio-preview-4').src = event.target.result;
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                };
+                
+                document.getElementById('studio-form').onsubmit = function(e) {
+                    e.preventDefault();
+                    addStudio();
+                };
+            } else if (mode === 'edit' && studioId) {
+                const studio = studios.find(s => s.id === studioId);
+                if (!studio) return;
+                
+                modalTitle.textContent = 'Edit Studio';
+                modalContent.innerHTML = `
+                    <form id="studio-form">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Studio Name</label>
+                            <input type="text" id="studio-name" class="w-full p-2 border border-gray-300 rounded" value="${studio.name}" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <textarea id="studio-description" class="w-full p-2 border border-gray-300 rounded" rows="3" required>${studio.description}</textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Image Gallery</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Image 1</label>
+                                    <div class="photo-upload-container">
+                                        <img id="studio-preview-1" class="photo-preview" src="${studio.images[0] || 'https://placehold.co/128x128/065f46/ffffff?text=UPLOAD'}" alt="Studio Image">
+                                        <input type="file" id="studio-image-1" accept="image/*">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Image 2</label>
+                                    <div class="photo-upload-container">
+                                        <img id="studio-preview-2" class="photo-preview" src="${studio.images[1] || 'https://placehold.co/128x128/065f46/ffffff?text=UPLOAD'}" alt="Studio Image">
+                                        <input type="file" id="studio-image-2" accept="image/*">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Image 3</label>
+                                    <div class="photo-upload-container">
+                                        <img id="studio-preview-3" class="photo-preview" src="${studio.images[2] || 'https://placehold.co/128x128/065f46/ffffff?text=UPLOAD'}" alt="Studio Image">
+                                        <input type="file" id="studio-image-3" accept="image/*">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Image 4</label>
+                                    <div class="photo-upload-container">
+                                        <img id="studio-preview-4" class="photo-preview" src="${studio.images[3] || 'https://placehold.co/128x128/065f46/ffffff?text=UPLOAD'}" alt="Studio Image">
+                                        <input type="file" id="studio-image-4" accept="image/*">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded" onclick="closeModal()">Cancel</button>
+                            <button type="submit" class="btn-primary text-white px-4 py-2 rounded">Update Studio</button>
+                        </div>
+                    </form>
+                `;
+                
+                // Setup image upload handlers
+                document.getElementById('studio-image-1').onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            document.getElementById('studio-preview-1').src = event.target.result;
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                };
+                
+                document.getElementById('studio-image-2').onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            document.getElementById('studio-preview-2').src = event.target.result;
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                };
+                
+                document.getElementById('studio-image-3').onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            document.getElementById('studio-preview-3').src = event.target.result;
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                };
+                
+                document.getElementById('studio-image-4').onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            document.getElementById('studio-preview-4').src = event.target.result;
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                };
+                
+                document.getElementById('studio-form').onsubmit = function(e) {
+                    e.preventDefault();
+                    updateStudio(studioId);
+                };
+            }
+            
+            modal.classList.remove('hidden');
+        };
+
+        function addStudio() {
+            const name = document.getElementById('studio-name').value;
+            const description = document.getElementById('studio-description').value;
+            
+            // Create new studio with default images
+            const newStudio = {
+                id: `studio${String(studios.length + 1).padStart(3, '0')}`,
+                name: name,
+                description: description,
+                images: [
+                    'https://placehold.co/400x250/065f46/ffffff?text=Studio+Image+1',
+                    'https://placehold.co/400x250/047857/ffffff?text=Studio+Image+2',
+                    'https://placehold.co/400x250/10b981/ffffff?text=Studio+Image+3',
+                    'https://placehold.co/400x250/34d399/ffffff?text=Studio+Image+4'
+                ]
+            };
+            
+            studios.push(newStudio);
+            renderStudioList();
+            closeModal();
+            alert('Studio added successfully!');
+        }
+
+        function updateStudio(studioId) {
+            const studio = studios.find(s => s.id === studioId);
+            if (!studio) return;
+            
+            studio.name = document.getElementById('studio-name').value;
+            studio.description = document.getElementById('studio-description').value;
+            
+            // Handle image updates (simplified for demo)
+            // In a real app, you would process the uploaded files here
+            
+            renderStudioList();
+            closeModal();
+            alert('Studio updated successfully!');
+        }
+
+        window.deleteStudio = function(studioId) {
+            if (confirm('Are you sure you want to delete this studio?')) {
+                studios = studios.filter(s => s.id !== studioId);
+                renderStudioList();
+                alert('Studio deleted successfully!');
+            }
+        };
+
+        // --- AUTO REFRESH FUNCTIONS ---
+        function startAutoRefresh() {
+            // Clear any existing interval
+            stopAutoRefresh();
+            
+            // Set up new interval
+            refreshInterval = setInterval(() => {
+                // Update refresh status
+                document.getElementById('refresh-status').textContent = 'Refreshing...';
+                
+                // Get current student ID
+                const activeItem = document.querySelector('.student-list-item.active');
+                let studentId = null;
+                if (activeItem) {
+                    studentId = activeItem.getAttribute('data-student-id');
+                }
+                
+                // Re-render the student list to refresh data
+                renderStudentListForAttendance();
+                
+                // If there was an active student, re-select it
+                if (studentId) {
+                    const student = students.find(s => s.id === studentId);
+                    if (student) {
+                        const studentElement = document.querySelector(`[data-student-id="${studentId}"]`);
+                        if (studentElement) {
+                            displayStudentDetails(studentId, studentElement);
+                        }
+                    }
+                }
+                
+                // Update status text
+                setTimeout(() => {
+                    document.getElementById('refresh-status').textContent = 'Auto-refresh enabled';
+                }, 1000);
+            }, 8000); // 8 seconds
+        }
+
+        function stopAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+            }
+        }
+
+        // --- DOWNLOAD FUNCTION ---
+        window.downloadMarksheet = function() {
+            alert("Marksheet download simulated.");
+        };
+
+        // --- NOTICES FOR HOME PAGE ---
+        function renderNoticesForHome() {
+            const noticesContainer = document.getElementById('home-notices');
+            noticesContainer.innerHTML = '';
+            
+            if (notices.length === 0) {
+                noticesContainer.innerHTML = '<p class="text-gray-500">No notices available</p>';
+                return;
+            }
+            
+            // Show only the latest 3 notices
+            const latestNotices = notices.slice(0, 3);
+            
+            latestNotices.forEach(notice => {
+                const noticeElement = document.createElement('div');
+                noticeElement.className = 'p-4 bg-white rounded-lg border-l-4 border-emerald-500 shadow-sm';
+                noticeElement.innerHTML = `
+                    <h5 class="font-bold text-gray-800">${notice.title}</h5>
+                    <p class="text-gray-600 text-sm mt-1">${notice.content}</p>
+                    <p class="text-xs text-gray-500 mt-2">${notice.date}</p>
+                `;
+                noticesContainer.appendChild(noticeElement);
+            });
+        }
+
+        // --- INITIALIZE APP ---
+        window.onload = function() {
+            initializeDummyData();
+            renderView('home');
+            lucide.createIcons();
+        };
+        
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/flow尖端vsp@2.3.0/dist/flow outgoing.js"></script>
+</body>
+</html>
